@@ -36,7 +36,7 @@ class Handler implements Runnable {
             while (true){
                 length = din.read(inputByte, 0, inputByte.length);
                 fos.write(inputByte, 0, length);
-                System.out.println(length + bytes downloaded.);
+                System.out.println(length + "bytes downloaded.");
                 if (-1 == length)
                 {
                     System.out.println("Finish to download file.");
@@ -62,7 +62,6 @@ class Handler implements Runnable {
         try {
             if (null != socket) {
                 System.out.println(socket.getInetAddress() + ":" + socket.getPort() + " is connected");
-                bool flag = true;
                 while (true){
                     int type = ois.readByte();
                     if (1 == type)

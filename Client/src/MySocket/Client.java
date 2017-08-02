@@ -12,14 +12,19 @@ class Handler implements Runnable{
     InputStream in;
 
     Handler(){
-        socket = new Socket();
-        socket.connect(new InetSocketAddress(2055));
-        out = socket.getOutputStream();
-        in = socket.getInputStream();
+        try {
+            socket = new Socket();
+            socket.connect(new InetSocketAddress(2055));
+            out = socket.getOutputStream();
+            in = socket.getInputStream();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
-    public void Run(){
-        
+    public void run(){
+
     }
 
 }
@@ -28,10 +33,13 @@ public class Client {
     public static void main(String [] args){
 
         try{
-            socket = new Socket();
-            socket.connect(new InetSocketAddress(2055));
-            out = socket.getOutputStream();
-            in = socket.getInputStream();
+            FileSelection fileSelection = new FileSelection();
+            fileSelection.pack();
+            fileSelection.setVisible(true);
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+
         }
 
     }
