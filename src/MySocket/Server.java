@@ -4,6 +4,35 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+class Handler implements Runnable {
+    private Socket socket;
+
+    public Handler(Socket socket) {
+        this.socket = socket;
+    }
+
+    public void run() {
+        try {
+            if (null != socket) {
+                System.out.println(socket.getInetAddress() + ":" + socket.getPort() + " is connected");
+                //TODO:
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (null != socket) {
+                    System.out.println("Close connection " + socket.getInetAddress() + ":" + socket.getPort());
+                    socket.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
 public class Server {
 
     public static void main(String[] args) {
@@ -15,15 +44,12 @@ public class Server {
                 Socket socket = null;
                 try {
                     socket = serverSocket.accept();
-                    System.out.println(socket.getInetAddress() + ":" + socket.getPort() + " is connected");
+                    Thread curConnection = new Thread((new Handler(socket)));
+                    curConnection.start();
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
-                    try {
-                        if (null == socket) socket.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 }
             }
         } catch (IOException e) {
@@ -34,7 +60,6 @@ public class Server {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
     }
 }
