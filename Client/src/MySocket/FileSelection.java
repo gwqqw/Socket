@@ -53,15 +53,7 @@ public class FileSelection extends JDialog {
         browseButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                JFileChooser fileChooser;
-                fileChooser = new JFileChooser();
-//                fileChooser.setTitle("Select a file");
-//                fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Files","*.*"));
-//                File selectedFile = fileChooser.showOpenDialog(null);
-//                if (null != selectedFile) {
-//                    filePath.setText(selectedFile.getPath());
-//                }
+                onBrowserClick();
             }
         });
     }
@@ -75,6 +67,17 @@ public class FileSelection extends JDialog {
         // add your code here if necessary
         dispose();
     }
+
+    private void onBrowserClick(){
+        JFileChooser fileChooser;
+        fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setAcceptAllFileFilterUsed(true);
+        fileChooser.setVisible(true);
+        fileChooser.showDialog(this, "Selection a File");
+        filePath.setText(fileChooser.getSelectedFile().getAbsolutePath());
+    }
+
 
     public static void main(String[] args) {
         FileSelection dialog = new FileSelection();

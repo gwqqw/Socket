@@ -10,14 +10,12 @@ class Handler implements Runnable {
     private OutputStream out;
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
-    public Handler(Socket socket) {
+    public Handler(ServerSocket serverSocket) {
         try {
-            this.socket = socket;
+            this.socket = serverSocket.accept();
             in = socket.getInputStream();
             out = socket.getOutputStream();
-            ois = new ObjectInputStream(in);
-            oos = new ObjectOutputStream(out);
-        }catch (IOException e){
+        }catch (Exception e){
             e.printStackTrace();
             System.out.println("Handler constructor throws exception.");
         }
@@ -58,31 +56,33 @@ class Handler implements Runnable {
         }
     }
 
+    @Override
     public void run() {
+        Socket socket = null;
+        ObjectInputStream ois = null;
+        ObjectOutputStream oos = null;
         try {
+            ois = new ObjectInputStream(socket.getInputStream());
+            oos = new ObjectOutputStream(socket.getOutputStream());
             if (null != socket) {
                 System.out.println(socket.getInetAddress() + ":" + socket.getPort() + " is connected");
-                while (true){
+                while (true) {
                     int type = ois.readByte();
-                    if (1 == type)
-                    {
+                    if (1 == type) {
                         DownloadFile();
-                    }
-                    else if(2 == type)
-                    {
+                    } else if (2 == type) {
                         break;
                     }
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
-                if (null != oos){
+                if (null != oos) {
                     oos.close();
                 }
-                if (null != ois){
+                if (null != ois) {
                     ois.close();
                 }
                 if (null != socket) {
@@ -104,13 +104,11 @@ public class Server {
 
             serverSocket = new ServerSocket(2055);
             while (true) {
-                Socket socket = null;
                 try {
-                    socket = serverSocket.accept();
-                    Thread curConnection = new Thread((new Handler(socket)));
+                    Thread curConnection = new Thread((new Handler(serverSocket)));
                     curConnection.start();
 
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
                 }
