@@ -50,8 +50,8 @@ class ClientHandler implements Runnable{
             file = new File(strFilePath);
             fin = new FileInputStream(file);
             sendByte = new byte[1024];
-            System.out.println("Start to upload file...");
-            dout.writeByte(1);
+            System.out.println("Start to upload file " + strFilePath);
+            dout.writeUTF(strFilePath);
             while ((length = fin.read(sendByte, 0, sendByte.length)) > 0){
                 dout.write(sendByte,0, length);
                 dout.flush();
@@ -95,39 +95,42 @@ public class Client {
         byte[] sendByte;
         int length = 0;
         try{
-//            //while (true){
-////                Thread uploadThread = new Thread(new ClientHandler());
-////                uploadThread.start();
-//            //}
-
             fileChooser = new JFileChooser();
             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             fileChooser.setAcceptAllFileFilterUsed(true);
             fileChooser.setVisible(true);
             fileChooser.showDialog(null, "Selection a file to upload");
             String strFilePath = fileChooser.getSelectedFile().getAbsolutePath();
+            String strFileName = fileChooser.getSelectedFile().getName();
 
             socket = new Socket();
-            socket.connect(new InetSocketAddress(2055));
+            socket.connect(new InetSocketAddress(30000));
+
+            System.out.println(socket.getInetAddress().getHostName() + " connects to server...");
             out = socket.getOutputStream();
-            //in = socket.getInputStream();
 
             dout = new DataOutputStream(socket.getOutputStream());
-            //din = new DataInputStream(socket.getInputStream());
             file = new File(strFilePath);
             fin = new FileInputStream(file);
             sendByte = new byte[1024];
-            System.out.println("Start to upload file...");
-            dout.writeByte(1);
+            System.out.println("Start to upload file " + strFilePath);
+            dout.writeUTF(strFileName);
+            dout.flush();
+            dout.writeLong(file.length());
+            dout.flush();
+            System.out.println("Send file length " + file.length());
             while ((length = fin.read(sendByte, 0, sendByte.length)) > 0){
                 dout.write(sendByte,0, length);
                 dout.flush();
+                System.out.println("Send file length " + length);
             }
-            dout.writeByte(2);
+            System.out.println("Send file finished.");
+            din = new DataInputStream(socket.getInputStream());
             while (true){
                 byte receive = din.readByte();
                 if (2 == receive)
                 {
+                    System.out.println("Get complish message from server.");
                     break;
                 }
             }
